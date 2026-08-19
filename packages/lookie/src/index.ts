@@ -67,15 +67,37 @@ function exprOf(el: HTMLElement): ExpressionName {
 }
 
 function init(): LookieInstance | null {
-  const el = document.querySelector<HTMLElement>(".lookie")!; // runtime guard di bawah
+  let el = document.querySelector<HTMLElement>(".lookie"); // runtime guard di bawah
   if (!el) return null;
 
-  if (!el.querySelector(".bob-wrap")) {
-    const div = document.createElement("div");
-    div.className = "bob-wrap";
-    el.appendChild(div);
+  let bob: HTMLElement | null = null;
+  function attachArrive(b: HTMLElement): void {
+    b.addEventListener("animationend", (e) => {
+      if ((e as AnimationEvent).animationName === "arrive") b.classList.remove("x-arrive");
+    });
   }
-  const bob = el.querySelector<HTMLElement>(".bob-wrap") as HTMLElement;
+  function readyBob(host: HTMLElement): HTMLElement {
+    let b = host.querySelector<HTMLElement>(".bob-wrap");
+    if (!b) {
+      b = document.createElement("div");
+      b.className = "bob-wrap";
+      host.appendChild(b);
+    }
+    attachArrive(b);
+    return b;
+  }
+  bob = readyBob(el);
+  // SPA-safe: after client-side navigation the original .lookie node is gone;
+  // re-query the live one so generator controls keep working (iOS reported).
+  function ensure(): boolean {
+    if (!el!.isConnected || !bob!.isConnected) {
+      const next = document.querySelector<HTMLElement>(".lookie");
+      if (!next || !next.isConnected) return false;
+      el = next;
+      bob = readyBob(next);
+    }
+    return true;
+  }
 
   const debug = el.hasAttribute("data-lookie-debug");
 
@@ -107,6 +129,7 @@ function init(): LookieInstance | null {
   }
 
   function bobDocument(svgText: string): void {
+    if (!ensure()) return;
     let svg: SVGElement | null = null;
     try {
       const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
@@ -138,12 +161,10 @@ function init(): LookieInstance | null {
     bob.classList.add("x-arrive");
   }
   function applyExpr(name: ExpressionName): void {
+    if (!ensure()) return;
     setClass(name);
     arrive();
   }
-  bob.addEventListener("animationend", (e) => {
-    if ((e as AnimationEvent).animationName === "arrive") bob.classList.remove("x-arrive");
-  });
 
   /* ---- pupils track the cursor ---- */
   let ex = 0;
