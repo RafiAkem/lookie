@@ -24,6 +24,7 @@ jobs:
         run: |
           npx lhci autorun --config=.lighthouseci.json
         env:
+          LHCI_CHROME_PATH: /usr/bin/google-chrome
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Upload Lighthouse report artifact
