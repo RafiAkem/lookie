@@ -18,7 +18,7 @@ const config: Config = {
           hover: "#1d4ed8",
           soft: "rgba(37, 99, 235, 0.08)",
         },
-        border: "rgba(15, 23, 42, 0.12)",
+        border: "rgba(15, 23, 42, 0.10)",
       },
       fontFamily: {
         serif: ["var(--font-fraunces)", "serif"],
