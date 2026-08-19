@@ -14,8 +14,8 @@ export function safeHex(value: string, fallback: string): string {
 
 export function buildMascotSvg(config: Partial<MascotConfig> = {}): string {
   const {
-    bodyColor = "#1b5e20",
-    strokeColor = "#144c1a",
+    bodyColor = "#2563eb",
+    strokeColor = "#1d4ed8",
     eyeSize = "medium",
     mouthStyle = "happy",
     blushOpacity = 0.16,

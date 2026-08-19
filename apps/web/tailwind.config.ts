@@ -8,26 +8,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#f8f5ee",
-        surface: "#fffdf8",
-        "surface-2": "#eee7da",
-        ink: "#211b17",
-        muted: "#756a5f",
+        cream: "#f8fafc",
+        surface: "#ffffff",
+        "surface-2": "#f1f5f9",
+        ink: "#0f172a",
+        muted: "#64748b",
         accent: {
-          DEFAULT: "#1b5e20",
-          hover: "#144c1a",
-          soft: "rgba(27, 94, 32, 0.08)",
+          DEFAULT: "#2563eb",
+          hover: "#1d4ed8",
+          soft: "rgba(37, 99, 235, 0.08)",
         },
-        border: "rgba(33, 27, 23, 0.14)",
+        border: "rgba(15, 23, 42, 0.12)",
       },
       fontFamily: {
         serif: ["var(--font-fraunces)", "serif"],
         sans: ["var(--font-plus-jakarta-sans)", "sans-serif"],
       },
       borderRadius: {
-        DEFAULT: "8px",
-        md: "8px",
-        lg: "8px",
+        DEFAULT: "10px",
+        md: "10px",
+        lg: "10px",
       },
     },
   },

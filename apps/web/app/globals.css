@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    --bg-cream: #f8f5ee;
-    --surface: #fffdf8;
-    --surface-2: #eee7da;
-    --ink: #211b17;
-    --muted: #756a5f;
-    --accent: #1b5e20;
-    --accent-hover: #144c1a;
-    --border: rgba(33, 27, 23, 0.14);
+    --bg-cream: #f8fafc;
+    --surface: #ffffff;
+    --surface-2: #f1f5f9;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --border: rgba(15, 23, 42, 0.12);
   }
 
   body {
@@ -25,6 +25,6 @@
 }
 
 ::selection {
-  background-color: rgba(27, 94, 32, 0.18);
-  color: #1b5e20;
+  background-color: rgba(37, 99, 235, 0.18);
+  color: #2563eb;
 }

@@ -5,7 +5,7 @@ import { buildMascotSvg, type MascotConfig } from "@/lib/svgBuilder";
 import type { ExpressionName } from "lookie";
 
 const COLOR_PRESETS = [
-  { name: "Forest", body: "#1b5e20", stroke: "#144c1a" },
+  { name: "Blue", body: "#2563eb", stroke: "#1d4ed8" },
   { name: "Clay", body: "#9a4f2e", stroke: "#6e331b" },
   { name: "Ochre", body: "#8a6d3b", stroke: "#614924" },
   { name: "Indigo", body: "#2a4365", stroke: "#1a2a40" },
@@ -37,8 +37,8 @@ const chipIdle = "border-border bg-surface text-muted hover:border-ink/40 hover:
 const chipActive = "border-ink bg-ink text-surface";
 
 export function MascotGenerator({ initialSvg }: { initialSvg: string }) {
-  const [bodyColor, setBodyColor] = useState("#1b5e20");
-  const [strokeColor, setStrokeColor] = useState("#144c1a");
+  const [bodyColor, setBodyColor] = useState("#2563eb");
+  const [strokeColor, setStrokeColor] = useState("#1d4ed8");
   const [eyeSize, setEyeSize] = useState<MascotConfig["eyeSize"]>("medium");
   const [mouthStyle, setMouthStyle] = useState<MascotConfig["mouthStyle"]>("happy");
   const [selectedExpr, setSelectedExpr] = useState<ExpressionName>("happy");
@@ -109,7 +109,7 @@ export function MascotGenerator({ initialSvg }: { initialSvg: string }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         {/* LEFT: LIVE PREVIEW */}
         <figure className="lg:col-span-7">
-          <div className="bg-surface border-8 border-ink shadow-[8px_8px_0_rgba(73,52,36,.18)] p-6 md:p-10">
+          <div className="bg-surface border-8 border-ink shadow-[8px_8px_0_rgba(15,23,42,.14)] p-6 md:p-10">
             <div className="h-64 md:h-80 relative overflow-hidden flex items-center justify-center">
               {/* Live rig: server-rendered initial SVG (no blank frame pre-hydration),
               lookie drives it via Lookie.setSvg once ready */}
