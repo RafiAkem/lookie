@@ -255,12 +255,12 @@ function init(): LookieInstance | null {
 
       if (active) {
         const r = active.getBoundingClientRect();
-        const H = el.offsetHeight;
+        const H = el!.offsetHeight;
         ay = clamp(r.top + r.height / 2 - H / 2, M, innerHeight - H - M);
         const k = frameK(0.12, dt);
         y += (ay - y) * k;
         if (Math.abs(ay - y) < 0.4) y = ay;
-        el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+        el!.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
       }
 
       const kp = frameK(0.16, dt);
