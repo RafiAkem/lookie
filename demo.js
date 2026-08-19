@@ -1,10 +1,10 @@
-/* demo.js — logika halaman demo lookie (preview ekspresi + interaksi) */
+/* demo.js — lookie demo page logic (expression previews + interactions) */
 (() => {
   "use strict";
   const L = window.Lookie;
   if (!L) return;
 
-  /* preview ekspresi: clone mascot.svg sekali, taruh 8x dengan class ekspresi */
+  /* expression previews: clone mascot.svg once, render 8x with expression class */
   fetch("mascot.svg")
     .then(r => r.text())
     .then(t => {
@@ -30,7 +30,7 @@
     })
     .catch(() => {});
 
-  /* klik row → lookie.set() (override), reset → balik mode scroll */
+  /* row click → lookie.set() (override), reset → back to scroll mode */
   document.getElementById("expr-list").addEventListener("click", e => {
     const row = e.target.closest(".expr-row");
     if (!row) return;
@@ -43,7 +43,7 @@
     document.querySelectorAll(".expr-row.active").forEach(r => r.classList.remove("active"));
   });
 
-  /* tombol demo: Lookie melompat di tempat */
+  /* demo button: Lookie jumps in place */
   document.getElementById("pop").addEventListener("click", () => {
     const bob = document.querySelector(".lookie .bob-wrap");
     bob.classList.remove("x-arrive");

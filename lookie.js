@@ -1,29 +1,29 @@
 /* ============================================================
-   lookie.js — mascot yang ngikutin section, mata ngawasin cursor
+   lookie.js — mascot that follows sections, eyes track the cursor
    v0.1.0 — MIT — https://github.com/rafiakem/lookie
 
-   Pasang:
+   Usage:
      <link rel="stylesheet" href="lookie.css">
      <div class="lookie" data-lookie-src="mascot.svg" data-lookie-auto></div>
      <script src="lookie.js" defer></script>
 
-   Ekspresi per section: data-mascot-expr="happy|thinking|loading|..."
-   API: Lookie.set('success')  → override sementara
-        Lookie.set()           → balik ke mode scroll (section)
-   data-lookie-auto            → fetch yang pending >300ms otomatis "loading"
+   Per-section expressions: data-mascot-expr="happy|thinking|loading|..."
+   API: Lookie.set('success')  → temporary override
+        Lookie.set()           → back to scroll mode (sections)
+   data-lookie-auto            → fetches pending >300ms auto-show "loading"
    ============================================================ */
 (function (global) {
   "use strict";
 
   var EXPRESSIONS = [
-    { name: "happy",     desc: "Keadaan awal. Senyum kecil, blush, pupil mengawasi cursor." },
-    { name: "thinking",  desc: "Tangan menopang dagu, mulut miring. Buat delay mikir, memilih opsi, pencarian." },
-    { name: "loading",   desc: "Mata garis, badan bekerja keras. Buat fetch data, cek pesanan, render." },
-    { name: "processing",desc: "Mulut O, fokus penuh. Buat submit form, upload, transaksi." },
-    { name: "typing",    desc: "Pupil menunduk, tangan mengetik. Buat input teks, chat, search box." },
-    { name: "secret",    desc: "Shh, satu mata terpejam. Buat input password, PIN, data rahasia." },
-    { name: "success",   desc: "Mata ^^, senyum lebar, tangan terangkat. Buat aksi berhasil, checkout, login." },
-    { name: "error",     desc: "Mata X, mulut cemberut. Buat kegagalan, 404, validasi error." }
+    { name: "happy",     desc: "Default state. Small smile, blush, pupils tracking the cursor." },
+    { name: "thinking",  desc: "Hand on chin, tilted mouth. For thought delays, option picking, search." },
+    { name: "loading",   desc: "Line eyes, body working hard. For data fetches, order checks, rendering." },
+    { name: "processing",desc: "O mouth, full focus. For form submits, uploads, transactions." },
+    { name: "typing",    desc: "Looking down, fingers typing. For text input, chat, search boxes." },
+    { name: "secret",    desc: "Shh, one eye closed. For passwords, PINs, private data." },
+    { name: "success",   desc: "^^ eyes, wide smile, raised hand. For completed actions, checkout, login." },
+    { name: "error",     desc: "X eyes, pouting mouth. For failures, 404s, validation errors." }
   ];
 
   var el = document.querySelector(".lookie");
@@ -36,7 +36,7 @@
     el.appendChild(bob);
   }
 
-  /* ---- muat SVG mascot (layer contract: body, eyes, pupils, mouths, hand) ---- */
+  /* ---- load mascot SVG (layer contract: body, eyes, pupils, mouths, hand) ---- */
   var src = el.dataset.lookieSrc || "mascot.svg";
   fetch(src)
     .then(function (r) { if (!r.ok) throw new Error("lookie: " + src + " -> HTTP " + r.status); return r.text(); })
@@ -62,7 +62,7 @@
     if (e.animationName === "arrive") bob.classList.remove("x-arrive");
   });
 
-  /* ---- pupil mengawasi cursor ---- */
+  /* ---- pupils track the cursor ---- */
   var ex = 0, ey = 0, px = 0, py = 0, tx = 0, ty = 0;
   function measure() {
     var r = el.getBoundingClientRect();
@@ -81,7 +81,7 @@
     if (t) setTarget(t.clientX, t.clientY);
   }, { passive: true });
 
-  /* ---- scroll-spy: section yang menutupi titik 80% viewport ---- */
+  /* ---- scroll-spy: the section covering the 80% viewport mark ---- */
   var sects = Array.prototype.slice.call(document.querySelectorAll("[data-mascot-expr]"));
   var active = sects[0] || el;
   var mode = "section";          // 'section' | 'manual'
@@ -99,7 +99,7 @@
     return sects[sects.length - 1];
   }
 
-  /* ---- auto loading dari fetch (data-lookie-auto) ---- */
+  /* ---- auto loading from fetches (data-lookie-auto) ---- */
   var autoOn = el.hasAttribute("data-lookie-auto");
   var pending = 0, loadTimer = null, inLoading = false;
   if (autoOn) {
@@ -125,7 +125,7 @@
     }
   }
 
-  /* ---- loop utama ---- */
+  /* ---- main loop ---- */
   function loop() {
     var next = pickActive();
     if (next !== active) {
@@ -146,14 +146,14 @@
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
-  /* ekspresi awal langsung tampil (tanpa tunggu ganti section) */
+  /* expression shows immediately (no need to wait for a section change) */
   if (active && active.dataset.mascotExpr) setClass(active.dataset.mascotExpr);
 
   /* ---- API ---- */
   global.Lookie = {
     EXPRESSIONS: EXPRESSIONS,
     set: function (name) {
-      if (!name) {            // kembali ke mode scroll
+      if (!name) {            // back to scroll mode
         mode = "section";
         applyExpr(active.dataset.mascotExpr || "happy");
         return;

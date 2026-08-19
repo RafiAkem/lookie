@@ -1,7 +1,7 @@
 /* ============================================================
-   lookie.css — mascot engine styles (ekspresi, animasi, layout)
+   lookie.css — mascot engine styles (expressions, animation, layout)
    Layer contract: body, eyes, pupils, eye-*, mouths, m-*,
-   hand hand-l hand-r, blush. Lihat README.md.
+   hand hand-l hand-r, blush. See README.md.
    ============================================================ */
 
 :root {
@@ -23,61 +23,61 @@
 .lookie .hand { transform-box: fill-box; transform-origin: center; }
 .lookie .body { transform-box: fill-box; transform-origin: center; }
 
-/* varian mata/mulut: default semua mati, ekspresi menyalakan */
+/* eye/mouth variants: all hidden by default, expressions turn them on */
 .lookie .eye-arc, .lookie .eye-closed, .lookie .eye-x, .lookie .eye-wink { display: none; }
 .lookie .m-flat, .lookie .m-o, .lookie .m-big, .lookie .m-sad, .lookie .m-slant { display: none; }
 
-/* ---- ekspresi: HAPPY (default) ---- */
+/* ---- expression: HAPPY (default) ---- */
 
-/* ---- ekspresi: THINKING ---- */
+/* ---- expression: THINKING ---- */
 .lookie.x-thinking .m-slant { display: block; }
 .lookie.x-thinking .m-happy { display: none; }
 .lookie.x-thinking .hand-r { transform: translate(-58px, -6px) rotate(48deg); }
 
-/* ---- ekspresi: LOADING ---- */
+/* ---- expression: LOADING ---- */
 .lookie.x-loading .eye-closed { display: block; }
 .lookie.x-loading .eyes, .lookie.x-loading .pupils { display: none; }
 .lookie.x-loading .m-flat { display: block; }
 .lookie.x-loading .m-happy { display: none; }
 .lookie.x-loading .bob-wrap { animation-duration: 1.1s; }
 
-/* ---- ekspresi: PROCESSING ---- */
+/* ---- expression: PROCESSING ---- */
 .lookie.x-processing .m-o { display: block; }
 .lookie.x-processing .m-happy { display: none; }
 .lookie.x-processing .bob-wrap { animation-duration: 1.6s; }
 
-/* ---- ekspresi: TYPING ---- */
+/* ---- expression: TYPING ---- */
 .lookie.x-typing .m-flat { display: block; }
 .lookie.x-typing .m-happy { display: none; }
 .lookie.x-typing .pupils { transform: translate(var(--lx), calc(var(--ly) + 4px)); }
 .lookie.x-typing .hand-l { animation: tap .4s ease-in-out infinite alternate; }
 
-/* ---- ekspresi: SECRET ---- */
+/* ---- expression: SECRET ---- */
 .lookie.x-secret .eye-wink { display: block; }
 .lookie.x-secret .eyes, .lookie.x-secret .pupils { display: none; }
 .lookie.x-secret .m-flat { display: block; }
 .lookie.x-secret .m-happy { display: none; }
 .lookie.x-secret .hand-r { transform: translate(-34px, 2px) rotate(62deg); }
 
-/* ---- ekspresi: SUCCESS ---- */
+/* ---- expression: SUCCESS ---- */
 .lookie.x-success .eye-arc { display: block; }
 .lookie.x-success .eyes, .lookie.x-success .pupils { display: none; }
 .lookie.x-success .m-big { display: block; }
 .lookie.x-success .m-happy { display: none; }
 .lookie.x-success .hand-r { transform: translate(-2px, -30px) rotate(20deg); }
 
-/* ---- ekspresi: ERROR ---- */
+/* ---- expression: ERROR ---- */
 .lookie.x-error .eye-x { display: block; }
 .lookie.x-error .eyes, .lookie.x-error .pupils { display: none; }
 .lookie.x-error .m-sad { display: block; }
 .lookie.x-error .m-happy { display: none; }
 .lookie.x-error .body { transform: rotate(-7deg); }
 
-/* ---- ekspresi: WAVE (footer/ucapan) ---- */
+/* ---- expression: WAVE (footer/greeting) ---- */
 .lookie.x-wave .hand-r { animation: wave 1s ease-in-out infinite; }
 .lookie.x-wave .bob-wrap { animation-duration: 1.9s; }
 
-/* kedatangan tiap ganti ekspresi */
+/* arrival bounce on every expression change */
 .lookie .bob-wrap.x-arrive { animation: arrive .35s cubic-bezier(.34, 1.56, .64, 1); }
 
 @keyframes bob {

@@ -1,10 +1,12 @@
 # Lookie
 
-Mascot SVG yang ngikutin section dan matanya ngawasin cursor. Satu file JavaScript plus satu file SVG — dipasang dengan dua baris.
+An SVG mascot that follows the section you are reading while its eyes track
+your cursor. One JavaScript file plus one SVG file, installed in a couple of
+lines.
 
-Demo live: https://lookie.rafiakem.tech
+Live demo: https://lookie.rafiakem.tech
 
-## Pasang
+## Install
 
 ```html
 <link rel="stylesheet" href="lookie.css">
@@ -16,78 +18,82 @@ Demo live: https://lookie.rafiakem.tech
 <script src="lookie.js" defer></script>
 ```
 
-## Ekspresi per section
+## Per-section expressions
 
-Tambah atribut ke section mana pun. Pas section itu menutupi titik 80% layar,
-Lookie meluncur ke sana dan ganti ekspresi:
+Add an attribute to any section. When that section covers the 80% viewport
+mark, Lookie glides over and switches its expression:
 
 ```html
 <section data-mascot-expr="loading">
 ```
 
-| Ekspresi     | Kapan dipakai                                    |
-|--------------|--------------------------------------------------|
-| `happy`      | default, keadaan awal                            |
-| `thinking`   | delay mikir, memilih opsi, pencarian             |
-| `loading`    | fetch data, cek pesanan, render                  |
-| `processing` | submit form, upload, transaksi                   |
-| `typing`     | input teks, chat, search box                     |
-| `secret`     | password, PIN, data rahasia                      |
-| `success`    | aksi berhasil, checkout, login                   |
-| `error`      | kegagalan, 404, validasi error                   |
-| `wave`       | footer, ucapan                                   |
+| Expression  | Use it for                                       |
+|-------------|--------------------------------------------------|
+| `happy`     | default state                                    |
+| `thinking`  | thought delays, option picking, search           |
+| `loading`   | data fetches, order checks, rendering            |
+| `processing`| form submits, uploads, transactions              |
+| `typing`    | text input, chat, search boxes                   |
+| `secret`    | passwords, PINs, private data                    |
+| `success`   | completed actions, checkout, login               |
+| `error`     | failures, 404s, validation errors                |
+| `wave`      | footers, greetings                               |
 
 ## API
 
 ```js
-Lookie.set("success"); // override ekspresi (tetap sampai di-reset)
-Lookie.set();          // balik ke mode scroll (section)
-Lookie.EXPRESSIONS     // katalog ekspresi + deskripsi
+Lookie.set("success"); // override the expression (stays until reset)
+Lookie.set();          // back to scroll mode (sections)
+Lookie.EXPRESSIONS     // expression catalog + descriptions
 ```
 
-## Auto loading dari fetch
+## Auto loading from fetches
 
-`data-lookie-auto` (opsional): fetch yang molor lebih dari 300 ms otomatis
-nampilin ekspresi `loading`, balik sendiri pas selesai. Anti-flicker, satu level
-saja, dan tidak mengganggu override manual (`Lookie.set`).
+`data-lookie-auto` (optional): fetches pending longer than 300 ms
+automatically show the `loading` expression and switch back when they settle.
+Anti-flicker, single-level, and it never overrides a manual `Lookie.set`.
 
-## Ganti warna & bentuk (custom design)
+## Custom colors & designs
 
-Ganti warna lewat atribut di SVG kamu (`mascot.svg` adalah template): isi body
-pakai warna utama, stroke pakai warna gelap. Atau gambar bentuk blob sendiri —
-yang penting **class layer contract-nya tetap ada**, karena ekspresi bekerja
-dengan men-toggle class:
+Change colors right in the SVG (the shipped `mascot.svg` is the template):
+body fill is the main color, strokes use the darker shade. Or draw your own
+blob shape — just keep the **layer contract** classes, because expressions
+work by toggling classes:
 
-| Class          | Isi                                   |
-|----------------|---------------------------------------|
-| `.body`        | badan + kaki (dan `.hand .hand-l .hand-r` untuk tangan) |
-| `.eyes`        | bola mata putih (di-blink otomatis)   |
-| `.pupils`      | pupil (digeser library mengikuti cursor, maks ±6px/x ±8px/y) |
-| `.eye-arc` `eye-closed` `eye-x` `eye-wink` | varian mata (default `display:none`) |
-| `.mouths`      | container mulut                       |
-| `.m-happy` `m-flat` `m-o` `m-big` `m-sad` `m-slant` | varian mulut (default `display:none`) |
-| `.blush`       | opsional                              |
+| Class         | Contents                                  |
+|---------------|-------------------------------------------|
+| `.body`       | body + feet (plus `.hand .hand-l .hand-r` for hands) |
+| `.eyes`       | white eyeballs (auto-blinking)            |
+| `.pupils`     | pupils (shifted by the library, clamped ±6px x / ±8px y) |
+| `.eye-arc` `eye-closed` `eye-x` `eye-wink` | eye variants (hidden by default) |
+| `.mouths`     | mouth container                           |
+| `.m-happy` `m-flat` `m-o` `m-big` `m-sad` `m-slant` | mouth variants (hidden by default) |
+| `.blush`      | optional                                  |
 
-Blob bentuk bebas boleh: eyes/pupils tinggal digeser koordinatnya, mouth
-path digambar ulang. Semua gerak (bob, blink, wave, tap, arrive) dan ekspresi
-ada di `lookie.css` — ubah di sana kalau mau tempo berbeda.
+Free-form blobs are fine: move the eyes/pupils coordinates, redraw the mouth
+paths. All motion (bob, blink, wave, tap, arrive) and expressions live in
+`lookie.css` — tweak timings there.
 
-## Behavior & aksesibilitas
+## Behavior & accessibility
 
-- Pupil: `mousemove` desktop, `touchmove` mobile, lerp halus, dikunci di bola mata
-- Posisi: scroll-spy di loop `requestAnimationFrame`, lerp meluncur antar section
-- Mascot dekoratif murni: `pointer-events: none`, `aria-hidden`, tidak menghalangi klik
-- `prefers-reduced-motion`: semua animasi mati (blink, bob, wave, tap, arrive)
+- Pupils: `mousemove` on desktop, `touchmove` on touch devices, smooth lerp,
+  clamped inside the eyeballs
+- Position: scroll-spy inside a `requestAnimationFrame` loop, lerped glide
+  between sections
+- Decorative only: `pointer-events: none`, `aria-hidden`, never blocks clicks
+  or screen readers
+- `prefers-reduced-motion`: all animations off (blink, bob, wave, tap, arrive)
 
-## Repo
+## Repo layout
 
 ```
-lookie.js      library (7 KB, tanpa dependency)
-lookie.css     ekspresi + animasi
-mascot.svg     template default
-index.html     demo (halaman ini)
+lookie.js      library (~7 KB, zero dependencies)
+lookie.css     expressions + animation
+mascot.svg     default template
+index.html     demo page
+demo.js        demo page logic
 ```
 
-MIT © 2026 Rafi Akem. Terinspirasi dari bloub.vercel.app dan ekosistem pet
-untuk coding agents — tapi render pakai vector rig, bukan spritesheet, biar
-animasinya fluid.
+MIT © 2026 Rafi Akem. Inspired by bloub.vercel.app and the pet ecosystem for
+coding agents — but rendered with a vector rig, not a spritesheet, so the
+animation stays fluid.

@@ -1,7 +1,7 @@
 <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- LAYER CONTRACT lookie: body (plus .hand .hand-l .hand-r), eyes, pupils,
        eye-arc, eye-closed, eye-x, eye-wink, mouths (m-happy m-flat m-o m-big
-       m-sad m-slant), blush. Jangan hapus class ini di template custom. -->
+       m-sad m-slant), blush. Keep these classes in custom templates. -->
   <g class="body" stroke="#144c1a" stroke-width="5" stroke-linejoin="round">
     <rect x="74" y="156" width="22" height="28" rx="11" fill="#1b5e20"/>
     <rect x="106" y="156" width="22" height="28" rx="11" fill="#1b5e20"/>
