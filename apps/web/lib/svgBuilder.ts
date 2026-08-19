@@ -80,8 +80,8 @@ export function buildMascotSvg(config: Partial<MascotConfig> = {}): string {
     <ellipse cx="128" cy="94" rx="${rx}" ry="${ry}" fill="#ffffff" stroke="${stroke}" stroke-width="4"/>
   </g>
   <g class="pupils">
-    <circle cx="76" cy="95" r="${pupilR}" fill="#211b17"/>
-    <circle cx="130" cy="95" r="${pupilR}" fill="#211b17"/>
+    <circle cx="76" cy="95" r="${pupilR}" fill="#0f172a"/>
+    <circle cx="130" cy="95" r="${pupilR}" fill="#0f172a"/>
   </g>
   <g class="blush" stroke="none">
     <circle cx="54" cy="114" r="7" fill="${stroke}" fill-opacity="${blushOpacity}"/>
