@@ -147,18 +147,18 @@ function init(): LookieInstance | null {
       svg = tpl.content.querySelector("svg");
     }
     if (!svg) throw new Error("lookie: invalid SVG");
-    bob.querySelectorAll("svg").forEach((s) => s.remove());
-    bob.appendChild(svg);
+    bob!.querySelectorAll("svg").forEach((s) => s.remove());
+    bob!.appendChild(svg);
   }
 
   function setClass(name: ExpressionName): void {
-    el.classList.remove(...ALL_CLASSES);
-    el.classList.add("x-" + name);
+    el!.classList.remove(...ALL_CLASSES);
+    el!.classList.add("x-" + name);
   }
   function arrive(): void {
-    bob.classList.remove("x-arrive");
-    void bob.offsetWidth;
-    bob.classList.add("x-arrive");
+    bob!.classList.remove("x-arrive");
+    void bob!.offsetWidth;
+    bob!.classList.add("x-arrive");
   }
   function applyExpr(name: ExpressionName): void {
     if (!ensure()) return;
@@ -174,7 +174,7 @@ function init(): LookieInstance | null {
   let tx = 0;
   let ty = 0;
   function measure(): void {
-    const r = el.getBoundingClientRect();
+    const r = el!.getBoundingClientRect();
     ex = r.x + r.width / 2;
     ey = r.y + r.height * 0.44;
   }
@@ -192,7 +192,7 @@ function init(): LookieInstance | null {
 
   /* ---- scroll-spy: section covering the 80% viewport mark ---- */
   const sects = Array.from(document.querySelectorAll<HTMLElement>("[data-mascot-expr]"));
-  let active = sects[0] || el;
+  let active = sects[0] || el!;
   let mode: Mode = "section";
   let ay = 0;
   let y = 0;
