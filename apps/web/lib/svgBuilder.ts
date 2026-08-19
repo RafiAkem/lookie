@@ -76,8 +76,8 @@ export function buildMascotSvg(config: Partial<MascotConfig> = {}): string {
     <path d="M62 92 Q74 100 86 92"/>
   </g>
   <g class="eyes">
-    <ellipse cx="74" cy="94" rx="${rx}" ry="${ry}" fill="#fffdf8" stroke="${stroke}" stroke-width="4"/>
-    <ellipse cx="128" cy="94" rx="${rx}" ry="${ry}" fill="#fffdf8" stroke="${stroke}" stroke-width="4"/>
+    <ellipse cx="74" cy="94" rx="${rx}" ry="${ry}" fill="#ffffff" stroke="${stroke}" stroke-width="4"/>
+    <ellipse cx="128" cy="94" rx="${rx}" ry="${ry}" fill="#ffffff" stroke="${stroke}" stroke-width="4"/>
   </g>
   <g class="pupils">
     <circle cx="76" cy="95" r="${pupilR}" fill="#211b17"/>
