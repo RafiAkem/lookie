@@ -4,7 +4,7 @@
       "staticDistDir": "apps/web/out",
       "url": [
         "http://localhost/",
-        "http://localhost/generate"
+        "http://localhost/generate.html"
       ],
       "numberOfRuns": 1
     },
