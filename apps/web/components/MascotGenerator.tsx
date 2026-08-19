@@ -30,6 +30,12 @@ function hexOnly(value: string, fallback: string): string {
   return /^#[0-9a-fA-F]{3,6}$/.test(clean) ? clean.toLowerCase() : fallback;
 }
 
+const chipBase =
+  "rounded-full border px-3 py-1.5 text-xs transition-colors capitalize " +
+  "focus-visible:outline-2 focus-visible:outline-accent";
+const chipIdle = "border-border bg-surface text-muted hover:border-ink/40 hover:text-ink";
+const chipActive = "border-ink bg-ink text-surface";
+
 export function MascotGenerator() {
   const [bodyColor, setBodyColor] = useState("#1b5e20");
   const [strokeColor, setStrokeColor] = useState("#144c1a");
@@ -94,21 +100,44 @@ export function MascotGenerator() {
   const bodyInputId = useId();
   const strokeInputId = useId();
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      {/* LEFT: CONTROLS */}
-      <div className="lg:col-span-6 space-y-6">
-        <div className="bg-surface p-6 rounded border border-border/80 shadow-sm space-y-6">
-          <h2 className="font-serif text-xl font-semibold text-ink border-b border-border/60 pb-3">
-            Customization Parameters
-          </h2>
+  const exprDesc =
+    AVAILABLE_EXPRESSIONS.find((e) => e.name === selectedExpr)?.desc ?? "";
 
-          {/* COLOR PRESETS */}
-          <div className="space-y-2.5">
-            <label className="text-xs uppercase tracking-wider text-muted font-medium block">
-              Color Palette Presets
-            </label>
-            <div className="grid grid-cols-3 gap-2">
+  return (
+    <div>
+      {/* STUDIO: heavy preview frame left, editorial controls right */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        {/* LEFT: LIVE PREVIEW */}
+        <figure className="lg:col-span-7">
+          <div className="bg-surface border-8 border-ink shadow-[8px_8px_0_rgba(73,52,36,.18)] p-6 md:p-10">
+            <div className="h-64 md:h-80 relative overflow-hidden flex items-center justify-center">
+              {/* Live rig: lookie auto-inits on this element, generator drives it via Lookie.setSvg */}
+              <div className="lookie w-40 h-40" aria-hidden="true">
+                <div className="bob-wrap" />
+              </div>
+            </div>
+          </div>
+          <figcaption className="flex items-baseline justify-between mt-3 text-xs">
+            <span className="font-semibold text-ink">Live rig</span>
+            <span className="text-muted">
+              {selectedExpr} · {eyeSize} eyes
+            </span>
+          </figcaption>
+          <p className="mt-2 text-xs leading-relaxed text-muted max-w-sm">
+            Keeps the layer contract classes (<code className="font-mono">body</code>,{" "}
+            <code className="font-mono">eyes</code>, <code className="font-mono">pupils</code>,{" "}
+            <code className="font-mono">mouths</code>, <code className="font-mono">m-*</code>,{" "}
+            <code className="font-mono">hand</code>) so any custom SVG animates out of the box.
+          </p>
+        </figure>
+
+        {/* RIGHT: EDITORIAL CONTROL LIST */}
+        <div className="lg:col-span-5 lg:border-l lg:border-border lg:pl-8 lg:py-1">
+          {/* 01 · COLOR */}
+          <div className="py-6 border-b border-border">
+            <p className="font-serif text-accent text-lg leading-none">01</p>
+            <h3 className="mt-1.5 font-semibold text-sm text-ink">Color</h3>
+            <div className="mt-3 flex flex-wrap gap-2">
               {COLOR_PRESETS.map((preset) => (
                 <button
                   key={preset.name}
@@ -117,91 +146,85 @@ export function MascotGenerator() {
                     setBodyColor(preset.body);
                     setStrokeColor(preset.stroke);
                   }}
-                  className={`flex items-center gap-2 p-2 rounded border text-xs text-left transition-all ${
+                  aria-pressed={bodyColor === preset.body && strokeColor === preset.stroke}
+                  className={`${chipBase} flex items-center gap-1.5 ${
                     bodyColor === preset.body && strokeColor === preset.stroke
-                      ? "border-accent bg-accent-soft text-ink font-medium ring-1 ring-accent"
-                      : "border-border hover:border-ink/30 bg-surface text-muted"
+                      ? chipActive
+                      : chipIdle
                   }`}
                 >
                   <span
-                    className="w-4 h-4 rounded-full border border-black/10 shrink-0"
+                    className="w-3 h-3 rounded-full border border-black/10 shrink-0"
                     style={{ backgroundColor: preset.body }}
                   />
-                  <span>{preset.name}</span>
+                  {preset.name}
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* CUSTOM COLOR INPUTS */}
-          <div className="grid grid-cols-2 gap-4 pt-2">
-            <div className="space-y-1.5">
-              <label
-                htmlFor={bodyInputId}
-                className="text-xs uppercase tracking-wider text-muted font-medium block"
-              >
-                Body Fill
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  id={bodyInputId}
-                  type="color"
-                  value={bodyColor}
-                  onChange={(e) => setBodyColor(e.target.value)}
-                  className="w-9 h-9 p-0.5 rounded border border-border bg-surface cursor-pointer"
-                />
-                <input
-                  type="text"
-                  value={bodyColor}
-                  onChange={(e) => setBodyColor(hexOnly(e.target.value, bodyColor))}
-                  aria-label="Body fill hex color"
-                  className="flex-1 font-mono text-xs px-2.5 py-2 rounded border border-border bg-surface text-ink uppercase"
-                />
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label
+                  htmlFor={bodyInputId}
+                  className="text-xs text-muted font-medium block"
+                >
+                  Body fill
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id={bodyInputId}
+                    type="color"
+                    value={bodyColor}
+                    onChange={(e) => setBodyColor(e.target.value)}
+                    className="w-8 h-8 p-0.5 rounded border border-border bg-surface cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={bodyColor}
+                    onChange={(e) => setBodyColor(hexOnly(e.target.value, bodyColor))}
+                    aria-label="Body fill hex color"
+                    className="flex-1 font-mono text-xs px-2.5 py-2 rounded border border-border bg-surface text-ink uppercase"
+                  />
+                </div>
               </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label
-                htmlFor={strokeInputId}
-                className="text-xs uppercase tracking-wider text-muted font-medium block"
-              >
-                Stroke Outline
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  id={strokeInputId}
-                  type="color"
-                  value={strokeColor}
-                  onChange={(e) => setStrokeColor(e.target.value)}
-                  className="w-9 h-9 p-0.5 rounded border border-border bg-surface cursor-pointer"
-                />
-                <input
-                  type="text"
-                  value={strokeColor}
-                  onChange={(e) => setStrokeColor(hexOnly(e.target.value, strokeColor))}
-                  aria-label="Stroke outline hex color"
-                  className="flex-1 font-mono text-xs px-2.5 py-2 rounded border border-border bg-surface text-ink uppercase"
-                />
+              <div className="space-y-1.5">
+                <label
+                  htmlFor={strokeInputId}
+                  className="text-xs text-muted font-medium block"
+                >
+                  Stroke outline
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id={strokeInputId}
+                    type="color"
+                    value={strokeColor}
+                    onChange={(e) => setStrokeColor(e.target.value)}
+                    className="w-8 h-8 p-0.5 rounded border border-border bg-surface cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={strokeColor}
+                    onChange={(e) => setStrokeColor(hexOnly(e.target.value, strokeColor))}
+                    aria-label="Stroke outline hex color"
+                    className="flex-1 font-mono text-xs px-2.5 py-2 rounded border border-border bg-surface text-ink uppercase"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* EYE SIZE */}
-          <div className="space-y-2 pt-2">
-            <label className="text-xs uppercase tracking-wider text-muted font-medium block">
-              Eye Proportion
-            </label>
-            <div className="grid grid-cols-3 gap-2">
+          {/* 02 · EYES */}
+          <div className="py-6 border-b border-border">
+            <p className="font-serif text-accent text-lg leading-none">02</p>
+            <h3 className="mt-1.5 font-semibold text-sm text-ink">Eye proportion</h3>
+            <div className="mt-3 flex flex-wrap gap-2">
               {(["small", "medium", "large"] as const).map((size) => (
                 <button
                   key={size}
                   type="button"
                   onClick={() => setEyeSize(size)}
-                  className={`py-2 px-3 rounded text-xs capitalize border text-center transition-all ${
-                    eyeSize === size
-                      ? "border-accent bg-accent-soft text-ink font-semibold ring-1 ring-accent"
-                      : "border-border bg-surface hover:border-ink/30 text-muted"
-                  }`}
+                  aria-pressed={eyeSize === size}
+                  className={`${chipBase} ${eyeSize === size ? chipActive : chipIdle}`}
                 >
                   {size}
                 </button>
@@ -209,22 +232,18 @@ export function MascotGenerator() {
             </div>
           </div>
 
-          {/* BASE MOUTH STYLE */}
-          <div className="space-y-2 pt-2">
-            <label className="text-xs uppercase tracking-wider text-muted font-medium block">
-              Resting Mouth Form
-            </label>
-            <div className="grid grid-cols-3 gap-2">
+          {/* 03 · MOUTH */}
+          <div className="py-6 border-b border-border">
+            <p className="font-serif text-accent text-lg leading-none">03</p>
+            <h3 className="mt-1.5 font-semibold text-sm text-ink">Resting mouth</h3>
+            <div className="mt-3 flex flex-wrap gap-2">
               {(["happy", "flat", "o", "big", "sad", "slant"] as const).map((m) => (
                 <button
                   key={m}
                   type="button"
                   onClick={() => setMouthStyle(m)}
-                  className={`py-2 px-3 rounded text-xs capitalize border text-center transition-all ${
-                    mouthStyle === m
-                      ? "border-accent bg-accent-soft text-ink font-semibold ring-1 ring-accent"
-                      : "border-border bg-surface hover:border-ink/30 text-muted"
-                  }`}
+                  aria-pressed={mouthStyle === m}
+                  className={`${chipBase} ${mouthStyle === m ? chipActive : chipIdle}`}
                 >
                   {m}
                 </button>
@@ -232,22 +251,19 @@ export function MascotGenerator() {
             </div>
           </div>
 
-          {/* PREVIEW EXPRESSION TESTER */}
-          <div className="space-y-2 pt-2">
-            <label className="text-xs uppercase tracking-wider text-muted font-medium block">
-              Test Rig Expression
-            </label>
-            <div className="grid grid-cols-4 gap-2">
+          {/* 04 · EXPRESSION RIG */}
+          <div className="py-6">
+            <p className="font-serif text-accent text-lg leading-none">04</p>
+            <h3 className="mt-1.5 font-semibold text-sm text-ink">Expression rig</h3>
+            <p className="mt-1 text-xs text-muted">{exprDesc}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
               {AVAILABLE_EXPRESSIONS.map((expr) => (
                 <button
                   key={expr.name}
                   type="button"
                   onClick={() => setSelectedExpr(expr.name)}
-                  className={`py-1.5 px-2 rounded text-xs capitalize border text-center transition-all ${
-                    selectedExpr === expr.name
-                      ? "border-accent bg-accent text-surface font-semibold"
-                      : "border-border bg-surface hover:border-ink/30 text-muted"
-                  }`}
+                  aria-pressed={selectedExpr === expr.name}
+                  className={`${chipBase} ${selectedExpr === expr.name ? chipActive : chipIdle}`}
                 >
                   {expr.name}
                 </button>
@@ -255,70 +271,44 @@ export function MascotGenerator() {
             </div>
           </div>
         </div>
-
-        {/* LAYER CONTRACT NOTICE */}
-        <div className="p-4 rounded bg-surface-2/60 border border-border/80 text-xs text-ink/70 space-y-2">
-          <p className="font-semibold text-ink">Bring your own design note</p>
-          <p className="leading-relaxed">
-            Keep the layer contract classes intact (<code className="font-mono text-ink font-medium">body</code>, <code className="font-mono text-ink font-medium">eyes</code>, <code className="font-mono text-ink font-medium">pupils</code>, <code className="font-mono text-ink font-medium">mouths</code>, <code className="font-mono text-ink font-medium">m-*</code>, <code className="font-mono text-ink font-medium">hand</code>). Any custom SVG containing these classes will animate properly.
-          </p>
-        </div>
       </div>
 
-      {/* RIGHT: LIVE PREVIEW + EXPORT */}
-      <div className="lg:col-span-6 space-y-6">
-        <div className="bg-surface p-6 rounded border border-border/80 shadow-sm space-y-6">
-          <div className="flex items-center justify-between border-b border-border/60 pb-3">
-            <h2 className="font-serif text-xl font-semibold text-ink">
-              Live Preview
-            </h2>
-            <span className="text-xs font-mono text-muted uppercase">
-              SVG Rig Output
-            </span>
+      {/* EXPORT */}
+      <div className="mt-14 pt-8 border-t border-border">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-8 items-end">
+          <div>
+            <p className="font-serif text-accent text-lg leading-none">05</p>
+            <h3 className="mt-1.5 font-semibold text-sm text-ink">Export</h3>
+            <p className="mt-1 text-sm leading-relaxed text-muted max-w-md">
+              The generated file follows the layer contract and works with the
+              Lookie rig the moment it is loaded.
+            </p>
           </div>
-
-          {/* PREVIEW CONTAINER */}
-          <div className="w-full h-64 bg-cream rounded border border-border/60 flex items-center justify-center p-6 relative overflow-hidden">
-            <div
-              className="w-40 h-40"
-              dangerouslySetInnerHTML={{ __html: svgCode }}
-            />
-          </div>
-
-          {/* ACTION BUTTONS */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 md:justify-end">
             <button
               type="button"
               onClick={handleDownload}
-              className="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded bg-accent hover:bg-accent-hover text-surface text-sm font-medium transition-colors shadow-sm"
+              className="px-5 py-2.5 rounded bg-ink hover:bg-black text-surface text-sm font-medium transition-colors"
             >
               Download mascot.svg
             </button>
             <button
               type="button"
               onClick={handleCopy}
-              className="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded bg-surface hover:bg-surface-2 border border-border text-ink text-sm font-medium transition-colors"
+              className="px-5 py-2.5 rounded bg-transparent hover:bg-surface-2 border border-border text-ink text-sm font-medium transition-colors"
             >
-              {copied ? "Copied SVG to Clipboard" : "Copy SVG Source"}
+              {copied ? "Copied to clipboard" : "Copy SVG source"}
             </button>
           </div>
         </div>
-
-        {/* RAW SVG SOURCE VIEW */}
-        <div className="bg-surface p-6 rounded border border-border/80 shadow-sm space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="font-serif text-sm font-semibold text-ink">
-              Generated SVG Markup
-            </h3>
-            <span className="font-mono text-xs text-muted">
-              {svgCode.length} characters
-            </span>
+        <div className="mt-6 bg-surface-2/70 border border-border rounded p-4">
+          <div className="flex items-baseline justify-between mb-2">
+            <span className="font-mono text-xs text-muted">mascot.svg</span>
+            <span className="font-mono text-xs text-muted">{svgCode.length} chars</span>
           </div>
-          <div className="bg-ink text-surface rounded p-3.5 font-mono text-xs overflow-x-auto max-h-56 overflow-y-auto border border-ink/20">
-            <pre className="text-surface-2/90 leading-relaxed whitespace-pre-wrap break-all">
-              {svgCode}
-            </pre>
-          </div>
+          <pre className="font-mono text-xs leading-relaxed text-ink whitespace-pre-wrap break-all max-h-56 overflow-y-auto">
+            {svgCode}
+          </pre>
         </div>
       </div>
     </div>
