@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lookie - Mascot yang ngikutin cursor</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lookie.css">
+<style>
+  :root {
+    --bg: #f8f5ee;
+    --surface: #fffdf8;
+    --ink: #211b17;
+    --muted: #756a5f;
+    --accent: #1b5e20;
+    --accent-dark: #144c1a;
+    --border: rgba(33, 27, 23, .14);
+    --radius: 8px;
+    --font-serif: "Fraunces", Georgia, serif;
+    --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ================= LAYOUT ================= */
+  .hero {
+    min-height: 92svh;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 56px;
+    padding-bottom: clamp(48px, 9vh, 96px);
+  }
+  .hero .eyebrow, .sec-head .eyebrow {
+    font-size: 13px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+    max-width: 14ch;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-side {
+    border-left: 1px solid var(--border);
+    padding-left: 32px;
+    display: flex; flex-direction: column; gap: 24px;
+  }
+  .hero-side p {
+    font-size: 17px; line-height: 1.6; color: var(--muted);
+    max-width: 34ch;
+  }
+  .hero-side p strong { color: var(--ink); font-weight: 600; }
+  .cta-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    font: 600 15px/1 var(--font-sans);
+    padding: 14px 22px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .16s cubic-bezier(.22, 1, .36, 1), background .16s;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-solid {
+    background: var(--ink); color: var(--surface);
+    border: 1px solid var(--ink);
+  }
+  .btn-solid:hover { background: #000; }
+  .btn-ghost {
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--ink); }
+  .note { font-size: 13px; color: var(--muted); }
+
+  /* ================= SECTION EKSPRESI ================= */
+  .expr, .how, footer {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .expr { padding-bottom: clamp(64px, 10vh, 120px); }
+  .sec-head h2, .how h2 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+    letter-spacing: -.01em;
+    margin-bottom: 12px;
+  }
+  .sec-head p { color: var(--muted); font-size: 15.5px; line-height: 1.6; margin-bottom: 40px; max-width: 52ch; }
+  .expr-list { border-top: 1px solid var(--border); }
+  .expr-row {
+    display: grid;
+    grid-template-columns: 96px 140px minmax(0, 1fr);
+    gap: 20px;
+    align-items: center;
+    padding: 16px 12px;
+    margin: 0 -12px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: background .16s;
+  }
+  .expr-row:hover { background: rgba(33, 27, 23, .04); }
+  .expr-row.active { background: rgba(27, 94, 32, .07); }
+  .x-preview {
+    width: 72px; height: 72px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .x-preview svg { width: 58px; height: 58px; display: block; animation: bob 2.8s ease-in-out infinite alternate; }
+  .expr-row .x-name { font-size: 15px; font-weight: 700; }
+  .expr-row .x-desc { font-size: 14px; line-height: 1.55; color: var(--muted); max-width: 52ch; }
+  .expr-row code {
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    background: rgba(33, 27, 23, .06);
+    padding: 1px 5px; border-radius: 4px;
+  }
+  .reset-row { margin-top: 20px; }
+
+  /* ================= HOW ================= */
+  .how { padding-bottom: clamp(64px, 10vh, 120px); }
+  .how h2 { margin-bottom: 40px; }
+  .how-list { border-top: 1px solid var(--border); }
+  .how-row {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 24px;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .how-row .idx {
+    font-family: var(--font-serif);
+    font-size: 20px; color: var(--accent);
+  }
+  .how-row h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .how-row p { font-size: 14.5px; line-height: 1.6; color: var(--muted); max-width: 58ch; }
+  .how-row code {
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    background: rgba(33, 27, 23, .06);
+    padding: 1px 6px; border-radius: 5px;
+  }
+
+  footer {
+    padding: 40px 0 160px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 24px; flex-wrap: wrap;
+  }
+  footer .f-brand { display: block; font-weight: 700; color: var(--ink); font-size: 14px; margin-bottom: 4px; }
+  footer p { max-width: 40ch; line-height: 1.6; }
+  footer nav { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 20vh; }
+    .hero-side { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 24px; }
+    .expr-row { grid-template-columns: 56px 1fr; }
+    .expr-row .x-desc { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+
+<div class="lookie" data-lookie-src="mascot.svg" data-lookie-auto aria-hidden="true">
+  <div class="bob-wrap"></div>
+</div>
+
+<main>
+  <section class="hero" data-mascot-expr="happy">
+    <div>
+      <p class="eyebrow">Mascot SVG · eye tracking</p>
+      <h1>Cursor lu punya <em>teman</em> baru.</h1>
+    </div>
+    <div class="hero-side">
+      <p><strong>Lookie</strong> nggak ikut-ikutan. Dia mengikuti section yang lagi lu baca, matanya mengawasi mouse lu.</p>
+      <div class="cta-row">
+        <button class="btn btn-solid" id="pop">Klik, dia melompat</button>
+        <a class="btn btn-ghost" href="#ekspresi">Lihat ekspresi</a>
+      </div>
+      <p class="note">Dia cuma ngelihatin. Santai.</p>
+    </div>
+  </section>
+
+  <section class="expr" id="ekspresi" data-mascot-expr="thinking">
+    <div class="sec-head">
+      <p class="eyebrow">Ekspresi</p>
+      <h2>8 ekspresi, satu baris atribut</h2>
+      <p>Tambah <code>data-mascot-expr="loading"</code> ke section manapun dan Lookie otomatis ganti raut wajah pas section itu masuk layar. Klik salah satu ekspresi di bawah buat langsung liat di Lookie.</p>
+    </div>
+    <div class="expr-list" id="expr-list">
+      <!-- preview di-clone oleh demo.js dari mascot.svg -->
+    </div>
+    <div class="reset-row">
+      <button class="btn btn-ghost" id="reset">Balikin ke mode scroll</button>
+    </div>
+  </section>
+
+  <section class="how" id="how" data-mascot-expr="typing">
+    <h2>Cara kerja</h2>
+    <div class="how-list">
+      <div class="how-row">
+        <span class="idx">01</span>
+        <div>
+          <h3>Aset SVG</h3>
+          <p>Mascot digambar sebagai satu file SVG dengan animasi idle: bob naik turun dan kedip tiap 4,4 detik. Bentuk mata dan mulut adalah varian dalam SVG yang di-toggle lewat class ekspresi.</p>
+        </div>
+      </div>
+      <div class="how-row">
+        <span class="idx">02</span>
+        <div>
+          <h3>Ikut section</h3>
+          <p>Scroll-spy di loop <code>requestAnimationFrame</code>: section yang menutupi titik 80% layar jadi aktif, Lookie meluncur ke section itu dengan <code>lerp</code> lalu ganti ekspresi sesuai atributnya.</p>
+        </div>
+      </div>
+      <div class="how-row">
+        <span class="idx">03</span>
+        <div>
+          <h3>Mata mengawasi</h3>
+          <p>Pupil menghitung arah cursor dari pusat mata dan menggeser dengan <code>lerp</code>, dikunci di dalam bola mata. Mouse pakai <code>mousemove</code>, sentuhan pakai <code>touchmove</code>.</p>
+        </div>
+      </div>
+      <div class="how-row">
+        <span class="idx">04</span>
+        <div>
+          <h3>Auto state</h3>
+          <p>Pakai <code>data-lookie-auto</code> dan Lookie nunjukin <code>loading</code> kalau ada fetch yang molor lebih dari 300 ms, balik sendiri pas kelar. Blink dan bob jalan sendiri di CSS.</p>
+        </div>
+      </div>
+      <div class="how-row">
+        <span class="idx">05</span>
+        <div>
+          <h3>Aksesibel</h3>
+          <p><code>prefers-reduced-motion</code> mematikan semua gerak. Mascot dekoratif murni, <code>pointer-events: none</code>, tidak menghalangi klik atau pembaca layar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-mascot-expr="wave">
+  <div>
+    <span class="f-brand">Lookie - mascot open source</span>
+    <p>Satu file JavaScript plus satu file SVG. Taruh di web manapun, ekspresi jalan dari atribut HTML.</p>
+  </div>
+  <nav>
+    <a href="https://github.com/rafiakem/lookie" target="_blank" rel="noreferrer">github.com/rafiakem/lookie</a>
+    <a href="https://bloub.vercel.app" target="_blank" rel="noreferrer">bloub.vercel.app</a>
+    <a href="https://rafiakem.tech" target="_blank" rel="noreferrer">rafiakem.tech</a>
+  </nav>
+</footer>
+
+<script src="lookie.js" defer></script>
+<script src="demo.js" defer></script>
+</body>
+</html>
