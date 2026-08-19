@@ -70,8 +70,18 @@ export function MascotGenerator({ initialSvg }: { initialSvg: string }) {
       if (disposed || !Lookie?.el) return;
       const apply = () => {
         readyRef.current = true;
-        Lookie.setSvg(svgCode);
-        Lookie.set(selectedExpr);
+        // setSvg and set are independent: a DOM/parse failure on one must not
+        // kill the other (mobile Safari/WebKit historically flaky on DOMParser).
+        try {
+          Lookie.setSvg(svgCode);
+        } catch {
+          // keep expression syncing even if SVG swap fails
+        }
+        try {
+          Lookie.set(selectedExpr);
+        } catch {
+          // keep SVG swap even if class sync fails
+        }
       };
       if (readyRef.current) {
         apply();

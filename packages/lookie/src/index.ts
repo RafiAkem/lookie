@@ -107,8 +107,23 @@ function init(): LookieInstance | null {
   }
 
   function bobDocument(svgText: string): void {
-    const svg = new DOMParser().parseFromString(svgText, "image/svg+xml").documentElement;
-    if (svg.tagName.toLowerCase() !== "svg") throw new Error("lookie: invalid SVG");
+    let svg: SVGElement | null = null;
+    try {
+      const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
+      if (doc.documentElement.tagName.toLowerCase() === "svg") {
+        svg = doc.documentElement as unknown as SVGElement;
+      }
+    } catch {
+      // fall through to template parsing
+    }
+    if (!svg) {
+      // Robust fallback: template + innerHTML works in every engine
+      // (Safari/WebKit included) and tolerates malformed input.
+      const tpl = document.createElement("template");
+      tpl.innerHTML = svgText;
+      svg = tpl.content.querySelector("svg");
+    }
+    if (!svg) throw new Error("lookie: invalid SVG");
     bob.querySelectorAll("svg").forEach((s) => s.remove());
     bob.appendChild(svg);
   }
