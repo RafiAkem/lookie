@@ -1,0 +1,31 @@
+{
+  "name": "lookie",
+  "version": "0.2.0",
+  "description": "An SVG mascot that follows sections and tracks the cursor. Zero dependencies.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/lookie.js",
+  "module": "./dist/lookie.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/lookie.mjs",
+      "require": "./dist/lookie.js",
+      "default": "./dist/lookie.js"
+    },
+    "./lookie.css": "./dist/lookie.css",
+    "./mascot.svg": "./dist/mascot.svg"
+  },
+  "files": ["dist"],
+  "sideEffects": ["*.css"],
+  "scripts": {
+    "build": "tsup && node -e \"const fs=require('fs');fs.copyFileSync('src/lookie.css','dist/lookie.css');fs.copyFileSync('src/mascot.svg','dist/mascot.svg');\"",
+    "typecheck": "tsc --noEmit",
+    "size": "node scripts/size.mjs"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "lookie-monorepo",
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "build": "npm run build -w lookie && npm run build -w web",
+    "typecheck": "npm run typecheck -w lookie && npm run typecheck -w web"
+  }
+}
