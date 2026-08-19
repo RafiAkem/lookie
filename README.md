@@ -1,5 +1,8 @@
 # Lookie
 
+![ci](https://github.com/rafiakem/lookie/actions/workflows/ci.yml/badge.svg)
+![lighthouse](https://github.com/rafiakem/lookie/actions/workflows/lighthouse.yml/badge.svg)
+
 An SVG mascot that follows the section you are reading while its eyes track
 your cursor. One JavaScript file plus one SVG file, installed in a couple of
 lines.
