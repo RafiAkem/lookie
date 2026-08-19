@@ -12,7 +12,7 @@ export function safeHex(value: string, fallback: string): string {
   return /^#[0-9a-fA-F]{3,8}$/.test(value) ? value : fallback;
 }
 
-export function buildMascotSvg(config: MascotConfig): string {
+export function buildMascotSvg(config: Partial<MascotConfig> = {}): string {
   const {
     bodyColor = "#1b5e20",
     strokeColor = "#144c1a",

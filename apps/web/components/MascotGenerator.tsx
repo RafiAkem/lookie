@@ -36,7 +36,7 @@ const chipBase =
 const chipIdle = "border-border bg-surface text-muted hover:border-ink/40 hover:text-ink";
 const chipActive = "border-ink bg-ink text-surface";
 
-export function MascotGenerator() {
+export function MascotGenerator({ initialSvg }: { initialSvg: string }) {
   const [bodyColor, setBodyColor] = useState("#1b5e20");
   const [strokeColor, setStrokeColor] = useState("#144c1a");
   const [eyeSize, setEyeSize] = useState<MascotConfig["eyeSize"]>("medium");
@@ -111,9 +111,10 @@ export function MascotGenerator() {
         <figure className="lg:col-span-7">
           <div className="bg-surface border-8 border-ink shadow-[8px_8px_0_rgba(73,52,36,.18)] p-6 md:p-10">
             <div className="h-64 md:h-80 relative overflow-hidden flex items-center justify-center">
-              {/* Live rig: lookie auto-inits on this element, generator drives it via Lookie.setSvg */}
+              {/* Live rig: server-rendered initial SVG (no blank frame pre-hydration),
+              lookie drives it via Lookie.setSvg once ready */}
               <div className="lookie w-40 h-40" aria-hidden="true">
-                <div className="bob-wrap" />
+                <div className="bob-wrap" dangerouslySetInnerHTML={{ __html: initialSvg }} />
               </div>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { SiteNav } from "@/components/SiteNav";
 import { MascotGenerator } from "@/components/MascotGenerator";
+import { buildMascotSvg } from "@/lib/svgBuilder";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
   description:
     "Customize and export your own Lookie mascot SVG with custom body hues, strokes, eye proportions, and mouth shapes.",
 };
+
+const INITIAL_SVG = buildMascotSvg({});
 
 export default function GeneratePage() {
   return (
@@ -42,7 +45,7 @@ export default function GeneratePage() {
           </div>
         </section>
 
-        <MascotGenerator />
+        <MascotGenerator initialSvg={INITIAL_SVG} />
       </main>
 
       <footer className="max-w-5xl mx-auto w-full px-5 py-7 mt-20 border-t border-border text-[13px] text-muted flex flex-col sm:flex-row items-center justify-between gap-3">
