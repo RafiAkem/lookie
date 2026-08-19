@@ -56,6 +56,7 @@ type Mode = "section" | "manual";
 interface LookieInstance {
   el: HTMLElement;
   bob: HTMLElement;
+  whenReady(cb: () => void): void;
   set(name: ExpressionName | ""): void;
   setSvg(svgText: string): void;
 }
@@ -78,18 +79,32 @@ function init(): LookieInstance | null {
 
   const debug = el.hasAttribute("data-lookie-debug");
 
-  /* ---- load mascot SVG (layer contract: body, eyes, pupils, mouths, hand) ---- */
-  const src = el.dataset.lookieSrc || "mascot.svg";
-  fetch(src)
+  /* ---- load mascot SVG (layer contract: body, eyes, pupils, mouths, hand)
+     Only fetches when data-lookie-src is present; without it the mascot is
+     "ready" immediately and waits for Lookie.setSvg() (generator usage). ---- */
+  let readyFired = false;
+  const readyCbs: Array<() => void> = [];
+  function fireReady(): void {
+    if (readyFired) return;
+    readyFired = true;
+    for (const cb of readyCbs) cb();
+    readyCbs.length = 0;
+  }
+  const src = el.dataset.lookieSrc;
+  if (src) {
+    fetch(src)
     .then((r) => {
       if (!r.ok) throw new Error("lookie: " + src + " -> HTTP " + r.status);
       return r.text();
     })
     .then((t) => {
       bobDocument(t);
-      el.dispatchEvent(new CustomEvent("lookie:ready", { detail: { svg: bob.querySelector("svg") } }));
+      fireReady();
     })
     .catch((e: unknown) => console.warn(e instanceof Error ? e.message : e));
+  } else {
+    fireReady();
+  }
 
   function bobDocument(svgText: string): void {
     const svg = new DOMParser().parseFromString(svgText, "image/svg+xml").documentElement;
@@ -147,13 +162,13 @@ function init(): LookieInstance | null {
   let y = 0;
   const M = 16;
 
-  function pickActive(): HTMLElement {
+  function pickActive(): HTMLElement | null {
     const mark = innerHeight * 0.8;
     for (const s of sects) {
       const r = s.getBoundingClientRect();
       if (r.top <= mark && r.bottom > mark) return s;
     }
-    return sects[sects.length - 1];
+    return sects.length ? sects[sects.length - 1] : null;
   }
 
   /* ---- auto loading from fetches (data-lookie-auto) ---- */
@@ -197,18 +212,20 @@ function init(): LookieInstance | null {
     if (!document.hidden) {
       const dt = now - last;
       const activeNow = pickActive();
-      if (activeNow !== active) {
+      if (activeNow && activeNow !== active) {
         active = activeNow;
         if (mode === "section") applyExpr(exprOf(active));
       }
 
-      const r = active.getBoundingClientRect();
-      const H = el.offsetHeight;
-      ay = clamp(r.top + r.height / 2 - H / 2, M, innerHeight - H - M);
-      const k = frameK(0.12, dt);
-      y += (ay - y) * k;
-      if (Math.abs(ay - y) < 0.4) y = ay;
-      el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+      if (active) {
+        const r = active.getBoundingClientRect();
+        const H = el.offsetHeight;
+        ay = clamp(r.top + r.height / 2 - H / 2, M, innerHeight - H - M);
+        const k = frameK(0.12, dt);
+        y += (ay - y) * k;
+        if (Math.abs(ay - y) < 0.4) y = ay;
+        el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+      }
 
       const kp = frameK(0.16, dt);
       px += (tx - px) * kp;
@@ -238,6 +255,10 @@ function init(): LookieInstance | null {
   return {
     el,
     bob,
+    whenReady(cb: () => void): void {
+      if (readyFired) cb();
+      else readyCbs.push(cb);
+    },
     set(name: ExpressionName | ""): void {
       if (!name) {
         // back to scroll mode
@@ -264,6 +285,9 @@ export const Lookie = {
   },
   setSvg(svgText: string): void {
     if (instance) instance.setSvg(svgText);
+  },
+  whenReady(cb: () => void): void {
+    if (instance) instance.whenReady(cb);
   },
 };
 
