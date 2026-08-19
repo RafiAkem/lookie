@@ -3,6 +3,11 @@
 import { useMemo, useState, useId, useEffect, useRef } from "react";
 import { buildMascotSvg, type MascotConfig } from "@/lib/svgBuilder";
 import type { ExpressionName } from "lookie";
+import dynamic from "next/dynamic";
+
+const CodeBlock = dynamic(() => import("./CodeBlock").then((m) => m.CodeBlock), {
+  ssr: false,
+});
 
 const COLOR_PRESETS = [
   { name: "Blue", body: "#2563eb", stroke: "#1d4ed8" },
@@ -77,7 +82,10 @@ export function MascotGenerator({ initialSvg }: { initialSvg: string }) {
     return () => {
       disposed = true;
     };
-  }, [svgCode, selectedExpr]);
+  // deps include mouthStyle: it does NOT change svgCode (all mouths always
+  // rendered), but React re-render still wipes lookie's x-* class, so the
+  // expression must be re-applied after any state-driven render.
+  }, [svgCode, selectedExpr, mouthStyle]);
 
   const handleDownload = () => {
     const blob = new Blob([svgCode], { type: "image/svg+xml" });
@@ -113,7 +121,7 @@ export function MascotGenerator({ initialSvg }: { initialSvg: string }) {
             <div className="h-64 md:h-80 relative overflow-hidden flex items-center justify-center">
               {/* Live rig: server-rendered initial SVG (no blank frame pre-hydration),
               lookie drives it via Lookie.setSvg once ready */}
-              <div className="lookie w-40 h-40" aria-hidden="true">
+              <div className={`lookie lookie--static rm-${mouthStyle}`} aria-hidden="true">
                 <div className="bob-wrap" dangerouslySetInnerHTML={{ __html: initialSvg }} />
               </div>
             </div>
@@ -302,14 +310,9 @@ export function MascotGenerator({ initialSvg }: { initialSvg: string }) {
             </button>
           </div>
         </div>
-        <div className="mt-6 bg-surface-2/70 border border-border rounded p-4">
-          <div className="flex items-baseline justify-between mb-2">
-            <span className="font-mono text-xs text-muted">mascot.svg</span>
-            <span className="font-mono text-xs text-muted">{svgCode.length} chars</span>
-          </div>
-          <pre className="font-mono text-xs leading-relaxed text-ink whitespace-pre-wrap break-all max-h-56 overflow-y-auto">
-            {svgCode}
-          </pre>
+        <div className="mt-6">
+          <CodeBlock code={svgCode} filename="mascot.svg" />
+          <p className="mt-2 font-mono text-[11px] text-muted text-right">{svgCode.length} chars</p>
         </div>
       </div>
     </div>

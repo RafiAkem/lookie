@@ -24,6 +24,29 @@
   }
 }
 
+/* ---- preview embed (generator): pin mascot inside its frame, not viewport corner ---- */
+.lookie.lookie--static {
+  position: static;
+  width: 10rem;
+  height: 10rem;
+  pointer-events: none;
+  /* scroll-spy moves the mascot via inline transform to follow sections;
+     the preview is static, so pin it in place */
+  transform: none !important;
+}
+
+/* ---- resting mouth (generator): user-picked mouth wins while expression is happy ---- */
+.lookie.rm-flat.x-happy .m-flat { display: block; }
+.lookie.rm-flat.x-happy .m-happy { display: none; }
+.lookie.rm-o.x-happy .m-o { display: block; }
+.lookie.rm-o.x-happy .m-happy { display: none; }
+.lookie.rm-big.x-happy .m-big { display: block; }
+.lookie.rm-big.x-happy .m-happy { display: none; }
+.lookie.rm-sad.x-happy .m-sad { display: block; }
+.lookie.rm-sad.x-happy .m-happy { display: none; }
+.lookie.rm-slant.x-happy .m-slant { display: block; }
+.lookie.rm-slant.x-happy .m-happy { display: none; }
+
 ::selection {
   background-color: rgba(37, 99, 235, 0.18);
   color: #2563eb;
